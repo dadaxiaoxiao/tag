@@ -1,20 +1,30 @@
 package main
 
 import (
+	"context"
+	"github.com/dadaxiaoxiao/tag/ioc"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
 
 func main() {
 	initViper()
 	initPrometheus()
+	closeFunc := ioc.InitOTEL()
 	app := InitApp()
 	err := app.GRPCServer.Serve()
 	if err != nil {
 		panic(err)
 	}
+
+	// 下面这些是正常退出
+	// 一分钟内要关完，且退出
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	closeFunc(ctx)
 }
 
 func initViper() {

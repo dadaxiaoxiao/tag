@@ -15,7 +15,6 @@ import (
 var thirdProvider = wire.NewSet(
 	ioc.InitEtcdClient,
 	ioc.InitLogger,
-	ioc.InitOTEL,
 	ioc.InitRedis,
 	ioc.InitDB,
 	ioc.InitKafka,
